@@ -20,48 +20,25 @@ func NewDiscordNotifier(webhookURL string) *DiscordNotifier {
 // Notify sends a card embed to the configured Discord webhook.
 func (d *DiscordNotifier) Notify(_ context.Context, card Card) error {
 	title := card.Name
-	description := fmt.Sprintf("**Set:** %s\n**Type:** %s", card.SetName, card.TypeLine)
+	description := ""
+	switch {
+		case card.Prices.USD != "":
+			description = fmt.Sprintf("**Price (USD):** %s", card.Prices.USD)
+		case card.Prices.EUR != "":
+			description = fmt.Sprintf("**Price (EUR):** %s", card.Prices.EUR)
+	}
 	colorStr := fmt.Sprintf("%d", colorForCard(card))
 	urlStr := card.ScryfallURI
-
-	manaCostName := "Mana Cost"
-	manaCostValue := card.ManaCost
-	rarityName := "Rarity"
-	rarityValue := card.Rarity
-
-	fields := []discordwebhook.Field{
-		{
-			Name:   &manaCostName,
-			Value:  &manaCostValue,
-			Inline: boolPtr(true),
-		},
-		{
-			Name:   &rarityName,
-			Value:  &rarityValue,
-			Inline: boolPtr(true),
-		},
-	}
-
-	if card.OracleText != "" {
-		oracleName := "Oracle Text"
-		oracleValue := truncate(card.OracleText, 1024)
-		fields = append(fields, discordwebhook.Field{
-			Name:   &oracleName,
-			Value:  &oracleValue,
-			Inline: boolPtr(false),
-		})
-	}
 
 	embed := discordwebhook.Embed{
 		Title:       &title,
 		Description: &description,
 		Color:       &colorStr,
-		Fields:      &fields,
 		Image:       &discordwebhook.Image{Url: &card.ImageURL},
 		Url:         &urlStr,
 	}
 
-	content := fmt.Sprintf("🃏 New Card: **%s**", card.Name)
+	content := fmt.Sprintf("New Card: **%s**", card.Name)
 	embeds := []discordwebhook.Embed{embed}
 	msg := discordwebhook.Message{
 		Content: &content,

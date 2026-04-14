@@ -93,7 +93,6 @@ func (p *Poller) Poll(ctx context.Context) {
 				log.Printf("WARNING: Failed to notify for %s — card will NOT be retried: %v", c.Name, err)
 				continue
 			}
-			log.Printf("✓ Notified: %s (%s)", c.Name, c.SetName)
 			newCount++
 			time.Sleep(p.rateLimitDelay)
 		}
@@ -129,14 +128,12 @@ func toNotifyCard(c *scryfall.Card) notify.Card {
 
 	return notify.Card{
 		ID:          c.ID,
-		Name:        c.Name,
-		SetName:     c.SetName,
-		TypeLine:    c.TypeLine,
-		ManaCost:    c.ManaCost,
-		Rarity:      string(c.Rarity),
-		OracleText:  c.OracleText,
 		ImageURL:    imageURL,
 		ScryfallURI: c.ScryfallURI,
 		Colors:      colors,
+		Prices: 	 notify.Prices{
+			USD: c.Prices.USD,
+			EUR: c.Prices.EUR,
+		}
 	}
 }

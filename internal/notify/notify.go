@@ -6,14 +6,16 @@ import "context"
 type Card struct {
 	ID          string
 	Name        string
-	SetName     string
-	TypeLine    string
-	ManaCost    string
 	Rarity      string
-	OracleText  string
 	ImageURL    string
 	ScryfallURI string
+	Prices	  	map[string]string
 	Colors      []string
+}
+
+type Prices struct {
+	USD	string
+	EUR	string
 }
 
 // Notifier sends card notifications to an external service.
