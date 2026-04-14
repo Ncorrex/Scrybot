@@ -23,9 +23,9 @@ func (d *DiscordNotifier) Notify(_ context.Context, card Card) error {
 	description := ""
 	switch {
 		case card.Prices.USD != "":
-			description = fmt.Sprintf("**Price (USD):** %s", card.Prices.USD)
+			description = fmt.Sprintf("Price (USD): $%s", card.Prices.USD)
 		case card.Prices.EUR != "":
-			description = fmt.Sprintf("**Price (EUR):** %s", card.Prices.EUR)
+			description = fmt.Sprintf("Price (EUR): %s€", card.Prices.EUR)
 	}
 	colorStr := fmt.Sprintf("%d", colorForCard(card))
 	urlStr := card.ScryfallURI

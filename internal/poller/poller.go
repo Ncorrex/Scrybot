@@ -128,10 +128,11 @@ func toNotifyCard(c *scryfall.Card) notify.Card {
 
 	return notify.Card{
 		ID:          c.ID,
+		Name:        c.Name,
 		ImageURL:    imageURL,
 		ScryfallURI: c.ScryfallURI,
 		Colors:      colors,
-		Prices: 	 notify.Prices{
+		Prices: notify.Prices{
 			USD: c.Prices.USD,
 			EUR: c.Prices.EUR,
 		},
