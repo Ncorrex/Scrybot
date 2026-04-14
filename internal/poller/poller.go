@@ -134,6 +134,6 @@ func toNotifyCard(c *scryfall.Card) notify.Card {
 		Prices: 	 notify.Prices{
 			USD: c.Prices.USD,
 			EUR: c.Prices.EUR,
-		}
+		},
 	}
 }
