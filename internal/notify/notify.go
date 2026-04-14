@@ -9,7 +9,7 @@ type Card struct {
 	Rarity      string
 	ImageURL    string
 	ScryfallURI string
-	Prices	  	map[string]string
+	Prices	  	Prices
 	Colors      []string
 }
 
