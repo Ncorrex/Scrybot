@@ -1,0 +1,36 @@
+# Binaries
+scrybot
+*.exe
+*.dll
+*.so
+*.dylib
+
+# Test binaries
+*.test
+
+# Output directories
+/bin
+/dist
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Environment variables
+.env
+.env.local
+
+# Data/State
+data/
+card_state.json
+*.db
+*.sqlite
+
+# Go
+go.work
+vendor/
+
