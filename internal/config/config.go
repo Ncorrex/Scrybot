@@ -1,7 +1,6 @@
 package config
 
 import (
-	"fmt"
 	"log"
 	"os"
 	"time"
@@ -19,7 +18,7 @@ type Config struct {
 func LoadFromEnv() Config {
 	cfg := Config{
 		WebhookURL:   os.Getenv("WEBHOOK_URL"),
-		PollInterval: parseDuration(os.Getenv("POLL_INTERVAL"), 1*time.Hour),
+		PollInterval: parseDuration(os.Getenv("POLL_INTERVAL"), 10*time.Minute),
 		DataDir:      os.Getenv("DATA_DIR"),
 		SearchQuery:  os.Getenv("SEARCH_QUERY"),
 	}
@@ -33,7 +32,7 @@ func LoadFromEnv() Config {
 	}
 
 	if cfg.SearchQuery == "" {
-		cfg.SearchQuery = fmt.Sprintf("year=%d", time.Now().UTC().Year())
+		cfg.SearchQuery = "(game:paper) prefer:newest"
 	}
 
 	return cfg

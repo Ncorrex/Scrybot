@@ -49,7 +49,7 @@ func (p *Poller) Poll(ctx context.Context) {
 	}
 
 	opts := scryfall.SearchCardsOptions{
-		Unique: scryfall.UniqueModeCards,
+		Unique: scryfall.UniqueModePrints,
 		Order:  "released",
 		Dir:    scryfall.DirDesc,
 		Page:   1,
@@ -90,7 +90,8 @@ func (p *Poller) Poll(ctx context.Context) {
 
 			card := toNotifyCard(&c)
 			if err := p.notifier.Notify(ctx, card); err != nil {
-				log.Printf("WARNING: Failed to notify for %s — card will NOT be retried: %v", c.Name, err)
+				log.Printf("WARNING: Failed to notify for %s — card will be retried in the next iteration: %v", c.Name, err)
+				delete(currentIDs, c.ID) // Don't mark as seen if notification failed
 				continue
 			}
 			newCount++
