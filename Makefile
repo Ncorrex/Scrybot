@@ -1,4 +1,4 @@
-.PHONY: help build run docker-build docker-run clean test lint deps
+.PHONY: help build run docker-build docker-run clean test lint deps ui-dev ui-build
 
 help:
 	@echo "Scrybot - Scryfall Alert Microservice"
@@ -12,9 +12,20 @@ help:
 	@echo "  make test         - Run Go tests (if any)"
 	@echo "  make lint         - Run Go linter"
 	@echo "  make deps         - Download and verify dependencies"
-	@echo "  make all          - Build everything (compile, lint, test)"
+	@echo "  make all          - Build everything (compile, lint, test)
+  make ui-dev       - Start the Vue dev server (proxies API to :8080)
+  make ui-build     - Build the Vue frontend into ui/dist"
 
-build:
+ui-build:
+	@echo "Building UI..."
+	cd ui && npm install && npm run build
+	@echo "✓ UI build complete: ui/dist"
+
+ui-dev:
+	@echo "Starting Vue dev server (proxy → :8080)..."
+	cd ui && npm run dev
+
+build: ui-build
 	@echo "Building scrybot..."
 	go build -o scrybot .
 	@echo "✓ Build complete: ./scrybot"

@@ -2,6 +2,8 @@ package main
 
 import (
 	"context"
+	"embed"
+	"io/fs"
 	"log"
 	"os"
 	"os/signal"
@@ -13,11 +15,21 @@ import (
 	"Scrybot/internal/config"
 	"Scrybot/internal/notify"
 	"Scrybot/internal/poller"
+	"Scrybot/internal/server"
 	"Scrybot/internal/state"
 )
 
+//go:embed ui/dist
+var uiFiles embed.FS
+
 func main() {
 	cfg := config.LoadFromEnv()
+
+	hub := server.NewHub()
+
+	// Intercept log output so every line is also broadcast over WebSocket.
+	log.SetOutput(server.NewLogWriter(hub, os.Stderr))
+	log.SetFlags(0) // timestamps are added by LogWriter's ts field
 
 	log.Printf("Starting Scryfall Alert Bot")
 	log.Printf("  Poll Interval: %v", cfg.PollInterval)
@@ -41,6 +53,25 @@ func main() {
 	}
 
 	p := poller.NewPoller(client, notifier, store, cfg.SearchQuery)
+
+	// --- HTTP / WebSocket server ---
+
+	uiPort := os.Getenv("UI_PORT")
+	if uiPort == "" {
+		uiPort = "8080"
+	}
+
+	sub, err := fs.Sub(uiFiles, "ui/dist")
+	if err != nil {
+		log.Printf("Warning: could not sub-FS for UI: %v", err)
+	}
+
+	srv := server.New(hub, cfg, store, sub, uiPort)
+	go func() {
+		if err := srv.Start(); err != nil {
+			log.Fatalf("HTTP server error: %v", err)
+		}
+	}()
 
 	// --- Run loop ---
 
