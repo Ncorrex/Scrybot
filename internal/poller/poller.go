@@ -49,8 +49,8 @@ func (p *Poller) Poll(ctx context.Context) {
 	}
 
 	opts := scryfall.SearchCardsOptions{
-		Unique: scryfall.UniqueModePrints,
-		Order:  "released",
+		Unique: scryfall.UniqueModeArt,
+		Order:  scryfall.OrderSet,
 		Dir:    scryfall.DirDesc,
 		Page:   1,
 	}
@@ -66,7 +66,21 @@ func (p *Poller) Poll(ctx context.Context) {
 		return
 	}
 
+	hasMore := resp.HasMore
+	log.Printf("Fetched %d card(s) from Scryfall (has_more=%v).", len(resp.Cards), hasMore)
 	cards := resp.Cards
+	while resp.HasMore {
+		opts.Page++
+		nextResp, err := p.client.SearchCards(ctx, p.query, opts)
+		if err != nil {
+			log.Printf("Error fetching page %d: %v", opts.Page, err)
+			break
+		}
+		cards = append(cards, nextResp.Cards...)
+		hasMore = nextResp.HasMore
+	}
+
+
 	firstRun := len(st.SeenIDs) == 0
 
 	// Collect every card ID from this fetch so we can persist it afterwards.

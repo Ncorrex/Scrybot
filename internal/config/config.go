@@ -32,7 +32,7 @@ func LoadFromEnv() Config {
 	}
 
 	if cfg.SearchQuery == "" {
-		cfg.SearchQuery = "(game:paper) prefer:newest"
+		cfg.SearchQuery = "date>now game:paper"
 	}
 
 	return cfg
