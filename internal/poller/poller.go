@@ -49,7 +49,7 @@ func (p *Poller) Poll(ctx context.Context) {
 	}
 
 	opts := scryfall.SearchCardsOptions{
-		Unique: scryfall.UniqueModeCards,
+		Unique: scryfall.UniqueModePrints,
 		Order:  "released",
 		Dir:    scryfall.DirDesc,
 		Page:   1,
