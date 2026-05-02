@@ -69,7 +69,7 @@ func (p *Poller) Poll(ctx context.Context) {
 	hasMore := resp.HasMore
 	log.Printf("Fetched %d card(s) from Scryfall (has_more=%v).", len(resp.Cards), hasMore)
 	cards := resp.Cards
-	while resp.HasMore {
+	while hasMore {
 		opts.Page++
 		nextResp, err := p.client.SearchCards(ctx, p.query, opts)
 		if err != nil {
